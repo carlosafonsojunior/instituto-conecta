@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_date: string
+          created_at: string
+          hour: number
+          id: string
+          note: string | null
+          updated_at: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          booking_date: string
+          created_at?: string
+          hour: number
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          booking_date?: string
+          created_at?: string
+          hour?: number
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: []
+      }
       institute_info: {
         Row: {
           about: string | null
