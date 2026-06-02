@@ -7,17 +7,16 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { cpfToEmail, formatCpf, onlyDigits } from "@/lib/cpf";
 
 const Auth = () => {
   const navigate = useNavigate();
   const { user, isAdmin, loading } = useAuth();
-  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signing, setSigning] = useState(false);
 
   useEffect(() => {
-    document.title = "Acesso restrito | IPASMA";
+    document.title = "Painel Admin | IPASMA";
   }, []);
 
   useEffect(() => {
@@ -29,9 +28,8 @@ const Auth = () => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const digits = onlyDigits(cpf);
-    if (digits.length !== 11) {
-      toast.error("Informe um CPF válido (11 dígitos).");
+    if (!email.trim()) {
+      toast.error("Informe o e-mail.");
       return;
     }
     if (!password) {
@@ -40,11 +38,11 @@ const Auth = () => {
     }
     setSigning(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email: cpfToEmail(digits),
+      email: email.trim().toLowerCase(),
       password,
     });
     if (error) {
-      toast.error("CPF ou senha inválidos.");
+      toast.error("E-mail ou senha inválidos.");
       setSigning(false);
     }
   }
@@ -57,22 +55,21 @@ const Auth = () => {
           className="bg-card border border-border rounded-sm shadow-elegant p-10"
         >
           <span className="gold-divider mb-4" />
-          <h1 className="font-display text-3xl text-primary mb-3 text-center">Acesso restrito</h1>
+          <h1 className="font-display text-3xl text-primary mb-3 text-center">Painel Admin</h1>
           <p className="text-muted-foreground text-sm mb-8 text-center">
-            Área exclusiva para administradores cadastrados do IPASMA.
+            Acesso restrito à equipe do IPASMA.
           </p>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="cpf">CPF</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
-                id="cpf"
-                inputMode="numeric"
+                id="email"
+                type="email"
                 autoComplete="username"
-                placeholder="000.000.000-00"
-                value={cpf}
-                onChange={(e) => setCpf(formatCpf(e.target.value))}
-                maxLength={14}
+                placeholder="ipasmant@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -93,7 +90,7 @@ const Auth = () => {
             {signing ? "Entrando…" : "Entrar"}
           </Button>
           <p className="text-xs text-muted-foreground mt-6 text-center">
-            Apenas CPFs cadastrados pelo IPASMA podem acessar o painel.
+            Apenas e-mails autorizados pelo IPASMA podem acessar o painel.
           </p>
         </form>
       </section>
