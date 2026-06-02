@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
-import { Landmark, Newspaper, Settings, LogOut, ExternalLink } from "lucide-react";
+import { Landmark, Newspaper, Settings, LogOut, ExternalLink, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -38,6 +38,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             activeClassName="bg-sidebar-accent text-sidebar-foreground font-medium"
           >
             <Settings className="h-4 w-4" /> Informações do Instituto
+          </NavLink>
+          <NavLink
+            to="/admin/senha"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground transition"
+            activeClassName="bg-sidebar-accent text-sidebar-foreground font-medium"
+          >
+            <KeyRound className="h-4 w-4" /> Alterar senha
           </NavLink>
         </nav>
 
