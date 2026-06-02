@@ -1,6 +1,6 @@
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,7 +15,7 @@ const links = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
@@ -45,9 +45,13 @@ export function SiteHeader() {
               <Link to="/admin">Painel Admin</Link>
             </Button>
           )}
-          {!user && (
+          {user ? (
+            <Button variant="ghost" size="sm" onClick={() => signOut()} className="ml-1">
+              <LogOut className="h-4 w-4 mr-1.5" /> Sair
+            </Button>
+          ) : (
             <Button asChild variant="ghost" size="sm" className="ml-3">
-              <Link to="/auth">Acesso restrito</Link>
+              <Link to="/auth">Painel Admin</Link>
             </Button>
           )}
         </nav>
@@ -83,9 +87,17 @@ export function SiteHeader() {
             ) : (
               !user && (
                 <Link to="/auth" className="px-2 py-3 text-sm font-medium text-muted-foreground" onClick={() => setOpen(false)}>
-                  Acesso restrito
+                  Painel Admin
                 </Link>
               )
+            )}
+            {user && (
+              <button
+                onClick={() => { signOut(); setOpen(false); }}
+                className="px-2 py-3 text-sm font-medium text-muted-foreground text-left"
+              >
+                Sair
+              </button>
             )}
           </nav>
         </div>
