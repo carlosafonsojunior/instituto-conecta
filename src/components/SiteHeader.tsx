@@ -1,9 +1,10 @@
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
-import { Landmark, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import ipasmaLogo from "@/assets/ipasma-logo.png.asset.json";
 
 const links = [
   { to: "/", label: "Início", end: true },
@@ -21,12 +22,10 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="container flex h-20 items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary text-primary-foreground shadow-sm">
-            <Landmark className="h-5 w-5" />
-          </div>
+          <img src={ipasmaLogo.url} alt="IPASMA" className="h-12 w-12 object-contain" />
           <div className="leading-tight">
-            <div className="font-display text-lg font-semibold text-primary">Instituto de Previdência</div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Regime Próprio</div>
+            <div className="font-display text-lg font-semibold text-primary">IPASMA</div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Instituto de Previdência · Mantenópolis-ES</div>
           </div>
         </Link>
 
