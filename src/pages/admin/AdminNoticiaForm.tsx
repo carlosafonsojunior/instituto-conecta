@@ -19,6 +19,7 @@ const newsSchema = z.object({
   content: z.string().trim().min(10, "Conteúdo muito curto").max(20000),
   author_name: z.string().trim().max(120).optional().or(z.literal("")),
   cover_image_url: z.string().url().optional().or(z.literal("")),
+  attachment_url: z.string().url().optional().or(z.literal("")),
   published: z.boolean(),
 });
 
@@ -29,11 +30,12 @@ const AdminNoticiaForm = () => {
   const { user } = useAuth();
 
   const [form, setForm] = useState({
-    title: "", excerpt: "", content: "", author_name: "", cover_image_url: "", published: true,
+    title: "", excerpt: "", content: "", author_name: "", cover_image_url: "", attachment_url: "", published: true,
   });
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
 
   useEffect(() => {
     document.title = isEdit ? "Editar notícia" : "Nova notícia";
@@ -43,6 +45,7 @@ const AdminNoticiaForm = () => {
         if (data) setForm({
           title: data.title, excerpt: data.excerpt ?? "", content: data.content,
           author_name: data.author_name ?? "", cover_image_url: data.cover_image_url ?? "",
+          attachment_url: (data as any).attachment_url ?? "",
           published: data.published,
         });
         setLoading(false);
@@ -50,20 +53,34 @@ const AdminNoticiaForm = () => {
     }
   }, [id, isEdit]);
 
-  async function uploadImage(file: File) {
-    setUploading(true);
+  async function uploadFile(file: File, kind: "image" | "pdf") {
+    if (kind === "image") {
+      const okType = /^image\/(jpe?g|png|webp)$/i.test(file.type);
+      if (!okType) { toast.error("Envie uma imagem JPG, PNG ou WEBP."); return; }
+      setUploading(true);
+    } else {
+      if (file.type !== "application/pdf") { toast.error("Envie um arquivo PDF."); return; }
+      setUploadingPdf(true);
+    }
     const ext = file.name.split(".").pop();
-    const path = `${user?.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("news-images").upload(path, file);
+    const path = `${user?.id}/${kind}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("news-images").upload(path, file, {
+      contentType: file.type,
+    });
     if (error) {
       toast.error("Erro no upload: " + error.message);
-      setUploading(false);
+      setUploading(false); setUploadingPdf(false);
       return;
     }
     const { data } = supabase.storage.from("news-images").getPublicUrl(path);
-    setForm((f) => ({ ...f, cover_image_url: data.publicUrl }));
-    setUploading(false);
-    toast.success("Imagem enviada");
+    if (kind === "image") {
+      setForm((f) => ({ ...f, cover_image_url: data.publicUrl }));
+      toast.success("Imagem enviada");
+    } else {
+      setForm((f) => ({ ...f, attachment_url: data.publicUrl }));
+      toast.success("PDF enviado");
+    }
+    setUploading(false); setUploadingPdf(false);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -80,6 +97,7 @@ const AdminNoticiaForm = () => {
       content: form.content.trim(),
       author_name: form.author_name.trim() || null,
       cover_image_url: form.cover_image_url.trim() || null,
+      attachment_url: form.attachment_url.trim() || null,
       published: form.published,
     };
 
@@ -135,18 +153,39 @@ const AdminNoticiaForm = () => {
         </div>
 
         <div>
-          <Label>Imagem de capa</Label>
+          <Label>Imagem de capa (JPG, PNG ou WEBP)</Label>
           <div className="mt-1.5 flex items-center gap-3">
             <label className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-border bg-background hover:bg-muted cursor-pointer text-sm">
               {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
               {uploading ? "Enviando…" : "Enviar imagem"}
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])} disabled={uploading} />
+              <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0], "image")} disabled={uploading} />
             </label>
             {form.cover_image_url && <span className="text-xs text-muted-foreground">Imagem carregada ✓</span>}
           </div>
           {form.cover_image_url && (
             <img src={form.cover_image_url} alt="Capa" className="mt-3 max-h-40 rounded-sm border border-border" />
           )}
+        </div>
+
+        <div>
+          <Label>Anexo em PDF (opcional)</Label>
+          <div className="mt-1.5 flex items-center gap-3">
+            <label className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-border bg-background hover:bg-muted cursor-pointer text-sm">
+              {uploadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              {uploadingPdf ? "Enviando…" : "Enviar PDF"}
+              <input type="file" accept="application/pdf" className="hidden" onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0], "pdf")} disabled={uploadingPdf} />
+            </label>
+            {form.attachment_url && (
+              <a href={form.attachment_url} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">
+                Abrir PDF anexado
+              </a>
+            )}
+            {form.attachment_url && (
+              <button type="button" onClick={() => setForm({ ...form, attachment_url: "" })} className="text-xs text-destructive hover:underline">
+                Remover
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3 pt-4 border-t border-border">
