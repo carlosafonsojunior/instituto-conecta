@@ -10,7 +10,6 @@ const links = [
   { to: "/", label: "Início", end: true },
   { to: "/sobre", label: "Sobre" },
   { to: "/noticias", label: "Notícias" },
-  { to: "/agenda", label: "Agenda" },
   { to: "/contato", label: "Contato" },
 ];
 
