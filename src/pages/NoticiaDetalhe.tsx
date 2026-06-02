@@ -1,7 +1,7 @@
 import { SiteLayout } from "@/components/SiteLayout";
 import { useNewsBySlug } from "@/hooks/useNews";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useEffect } from "react";
@@ -49,6 +49,18 @@ const NoticiaDetalhe = () => {
                 <p key={i}>{p}</p>
               ))}
             </div>
+
+            {(news as any).attachment_url && (
+              <a
+                href={(news as any).attachment_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-10 inline-flex items-center gap-2 px-5 py-3 rounded-sm border border-border bg-card hover:bg-muted transition-colors text-sm font-medium text-primary"
+              >
+                <FileText className="h-4 w-4 text-accent" />
+                Baixar documento anexo (PDF)
+              </a>
+            )}
           </>
         )}
       </article>
