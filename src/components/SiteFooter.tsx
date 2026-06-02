@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Landmark } from "lucide-react";
 import { useInstituteInfo } from "@/hooks/useInstituteInfo";
+import ipasmaLogo from "@/assets/ipasma-logo.png.asset.json";
 
 export function SiteFooter() {
   const { data: info } = useInstituteInfo();
@@ -10,10 +10,10 @@ export function SiteFooter() {
       <div className="container py-14 grid gap-10 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-accent text-accent-foreground">
-              <Landmark className="h-5 w-5" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-primary-foreground/95 p-1">
+              <img src={ipasmaLogo.url} alt="IPASMA" className="h-full w-full object-contain" />
             </div>
-            <div className="font-display text-lg">{info?.name ?? "Instituto de Previdência"}</div>
+            <div className="font-display text-lg">{info?.name ?? "IPASMA"}</div>
           </div>
           <p className="text-sm text-primary-foreground/70 leading-relaxed max-w-sm">
             {info?.short_description}
