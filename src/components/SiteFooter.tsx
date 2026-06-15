@@ -35,6 +35,16 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm text-primary-foreground/80">
             {info?.address && <li>{info.address}</li>}
             {info?.phone && <li>Tel: {info.phone}</li>}
+            <li>
+              <a
+                href="https://wa.me/552737581758?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20o%20IPASMA."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#25D366] transition-colors"
+              >
+                WhatsApp: (27) 3758-1758
+              </a>
+            </li>
             {info?.email && <li>E-mail: {info.email}</li>}
             {info?.business_hours && <li>{info.business_hours}</li>}
           </ul>

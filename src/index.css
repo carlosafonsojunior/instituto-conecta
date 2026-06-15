@@ -111,3 +111,13 @@
     @apply inline-block w-12 h-[2px] bg-accent;
   }
 }
+
+@layer utilities {
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2.5s ease-in-out infinite;
+  }
+}
