@@ -1,6 +1,6 @@
 import { SiteLayout } from "@/components/SiteLayout";
 import { useInstituteInfo } from "@/hooks/useInstituteInfo";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
 
 const Contato = () => {
@@ -13,6 +13,7 @@ const Contato = () => {
   const items = [
     { icon: MapPin, label: "Endereço", value: info?.address },
     { icon: Phone, label: "Telefone", value: info?.phone },
+    { icon: MessageCircle, label: "WhatsApp", value: "(27) 3758-1758", href: "https://wa.me/552737581758?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20o%20IPASMA." },
     { icon: Mail, label: "E-mail", value: info?.email },
     { icon: Clock, label: "Atendimento", value: info?.business_hours },
   ];
@@ -34,12 +35,23 @@ const Contato = () => {
           {items.map((it) => it.value && (
             <div key={it.label} className="bg-card border border-border rounded-sm p-6 shadow-card">
               <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-accent-soft text-accent flex-shrink-0">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-sm flex-shrink-0 ${it.label === "WhatsApp" ? "bg-[#25D366]/10 text-[#25D366]" : "bg-accent-soft text-accent"}`}>
                   <it.icon className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">{it.label}</div>
-                  <div className="font-medium text-foreground mt-1">{it.value}</div>
+                  {it.href ? (
+                    <a
+                      href={it.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-foreground mt-1 hover:text-[#25D366] transition-colors"
+                    >
+                      {it.value}
+                    </a>
+                  ) : (
+                    <div className="font-medium text-foreground mt-1">{it.value}</div>
+                  )}
                 </div>
               </div>
             </div>
